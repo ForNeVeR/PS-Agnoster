@@ -62,10 +62,10 @@ function global:Write-WithPrompt()
 
     if(Test-IsVanillaWindow)
     {
-        Write-ClassicPrompt -command $command 
+        Write-ClassicPrompt -command $command
         return
     }
-    
+
     Write-Theme -lastCommandFailed $lastCommandFailed -with $command
     Write-Host ' ' -NoNewline
 }
@@ -153,13 +153,13 @@ function New-CompletionResult
     New-Object System.Management.Automation.CompletionResult $CompletionText, $ListItemText, $CompletionResultType, $ToolTip
 }
 
-function ThemeCompletion 
+function ThemeCompletion
 {
     param(
-        $commandName, 
-        $parameterName, 
-        $wordToComplete, 
-        $commandAst, 
+        $commandName,
+        $parameterName,
+        $wordToComplete,
+        $commandAst,
         $fakeBoundParameter
     )
     $themes = @()
@@ -168,10 +168,12 @@ function ThemeCompletion
     $themes | Where-Object {$_.ToLower().StartsWith($wordToComplete)} | ForEach-Object { New-CompletionResult -CompletionText $_  }
 }
 
-Register-ArgumentCompleter `
-        -CommandName Set-Theme `
-        -ParameterName name `
-        -ScriptBlock $function:ThemeCompletion
+if ($PSVersionTable.PSVersion -ge '5.0') {
+    Register-ArgumentCompleter `
+            -CommandName Set-Theme `
+            -ParameterName name `
+            -ScriptBlock $function:ThemeCompletion
+}
 
 $sl = $global:ThemeSettings #local settings
 $sl.ErrorCount = $global:error.Count
